@@ -21,15 +21,18 @@ jobs:
       with:
         go-version: '1.22'
 
-    - name: Install Dependency
+    - name: Install eCloud Dependency
       run: |
-        go env -w GOPROXY=https://ecloud.10086.cn/api/query/developer/nexus/repository/go-sdk/,direct
+        go env -w GOPROXY=https://ecloud.10086.cn/api/query/developer/nexus/repository/go-sdk/
         go env -w GONOSUMDB=gitlab.ecloud.com
-        go env -w GOPRIVATE=ecloud.com
+        go get -u gitlab.ecloud.com/ecloud/ecloudsdkcomputer
         go mod tidy
 
     - name: Build
-      run: go build -v ./...
+      run: |
+        go env -w GOPROXY=direct
+        go env -w GONOSUMDB=
+        go build -v ./...
 
     - name: Test
       run: go test -v ./...
