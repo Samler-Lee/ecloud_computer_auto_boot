@@ -23,8 +23,9 @@ jobs:
 
     - name: Install eCloud Dependency
       run: |
-        export GOPROXY=https://ecloud.10086.cn/api/query/developer/nexus/repository/go-sdk/
+        export GOPROXY=https://ecloud.10086.cn/api/query/developer/nexus/repository/go-sdk/,https://proxy.golang.org,direct
         export GONOSUMDB=gitlab.ecloud.com
+        export GOPRIVATE=gitlab.ecloud.com
         go get gitlab.ecloud.com/ecloud/ecloudsdkcomputer
 
     - name: Build
