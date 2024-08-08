@@ -26,7 +26,7 @@ jobs:
         go env -w GOPROXY=https://ecloud.10086.cn/api/query/developer/nexus/repository/go-sdk/
         go env -w GONOSUMDB=gitlab.ecloud.com
         go get -u gitlab.ecloud.com/ecloud/ecloudsdkcomputer
-        go env -w GOPROXY=
+        go env -w GOPROXY=direct
         go env -w GONOSUMDB=
         go mod tidy
 
