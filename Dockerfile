@@ -1,12 +1,15 @@
-FROM golang:1.20-alpine as builder
+FROM golang:1.22-alpine as builder
 
 COPY . /app
 WORKDIR /app
 
 ENV GO111MODULE=on
-ENV GOPROXY=https://goproxy.cn,direct
-
-RUN go build -o ecloud_computer_auto_boot .
+RUN go env -w GOPROXY=https://ecloud.10086.cn/api/query/developer/nexus/repository/go-sdk/ &&  \
+    go env -w GONOSUMDB=gitlab.ecloud.com &&  \
+    go get -u gitlab.ecloud.com/ecloud/ecloudsdkcomputer &&  \
+    go env -w GOPROXY=https://goproxy.cn,direct &&  \
+    go env -w GONOSUMDB= &&  \
+    go build -o ecloud_computer_auto_boot .
 
 FROM alpine:latest
 
@@ -23,6 +26,5 @@ WORKDIR /app
 COPY --from=builder /app/ecloud_computer_auto_boot ./
 
 RUN chmod u+x ./ecloud_computer_auto_boot
-EXPOSE 10839
 
 ENTRYPOINT ["./ecloud_computer_auto_boot"]
