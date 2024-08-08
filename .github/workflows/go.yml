@@ -25,7 +25,7 @@ jobs:
       run: |
         export GOPROXY=https://ecloud.10086.cn/api/query/developer/nexus/repository/go-sdk/
         export GONOSUMDB=gitlab.ecloud.com
-        go get -u gitlab.ecloud.com/ecloud/ecloudsdkcomputer
+        go get gitlab.ecloud.com/ecloud/ecloudsdkcomputer
 
     - name: Build
       run: |
