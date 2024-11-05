@@ -6,7 +6,7 @@ import (
 	"gitlab.ecloud.com/ecloud/ecloudsdkcomputer/model"
 )
 
-func machineMonitor() {
+func startMachineMonitorOnOpenAPI() {
 	page := 1
 	failedCnt := 0
 
@@ -15,7 +15,7 @@ func machineMonitor() {
 			return
 		}
 
-		response, err := findMachine(int32(page))
+		response, err := findMachineOnOpenAPI(int32(page))
 		if err != nil {
 			failedCnt++
 			util.Log().Error("[实例状态监控] 请求失败: %s", err)
@@ -31,11 +31,11 @@ func machineMonitor() {
 		respData := *response.Body.Data
 		for _, instance := range respData {
 			machineId := *instance.MachineId
-			if util.InArray(conf.Cron.MachineList, machineId) {
+			if len(conf.Cron.Machines) == 0 || util.InArray(conf.Cron.Machines, machineId) {
 				if *instance.MachineStatus == "shutdown" {
 					go func() {
 						util.Log().Info("[实例状态监控] 检测到实例 %s 已关机, 请求启动", machineId)
-						resp, err := startupMachine(machineId)
+						resp, err := startupMachineOnOpenAPI(machineId)
 						if err != nil {
 							util.Log().Error("[启动实例] 实例 %s 启动失败: %s", err)
 							return
@@ -59,7 +59,7 @@ func machineMonitor() {
 	}
 }
 
-func findMachine(page int32) (*model.GetResourceListResponse, error) {
+func findMachineOnOpenAPI(page int32) (*model.GetResourceListResponse, error) {
 	body := &model.GetResourceListBody{}
 	body.SetPage(page).SetPageSize(50)
 
@@ -67,12 +67,12 @@ func findMachine(page int32) (*model.GetResourceListResponse, error) {
 		GetResourceListBody: body,
 	}
 
-	return cloudClient.GetResourceList(request)
+	return apiClient.GetResourceList(request)
 }
 
-func startupMachine(machineId string) (*model.OperateMachineByAvailableResponse, error) {
+func startupMachineOnOpenAPI(machineId string) (*model.OperateMachineByAvailableResponse, error) {
 	request := &model.OperateMachineByAvailableRequest{}
 	request.OperateMachineByAvailableQuery.SetMachineId(machineId)
 
-	return cloudClient.OperateMachineByAvailable(request)
+	return apiClient.OperateMachineByAvailable(request)
 }

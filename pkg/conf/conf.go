@@ -8,23 +8,25 @@ import (
 )
 
 type server struct {
-	Debug    bool   `yaml:"debug"`
-	LogLevel string `yaml:"log_level"`
+	Debug    bool   `yaml:"debug" mapstructure:"debug"`
+	LogLevel string `yaml:"log-level" mapstructure:"log-level"`
 }
 
 type secret struct {
-	AccessKey string `yaml:"access_key"`
-	SecretKey string `yaml:"secret_key"`
-	PoolId    string `yaml:"pool_id"`
+	Type      string `yaml:"type" mapstructure:"type"`
+	Username  string `yaml:"username" mapstructure:"username"`
+	Password  string `yaml:"password" mapstructure:"password"`
+	AccessKey string `yaml:"access-key" mapstructure:"access-key"`
+	SecretKey string `yaml:"secret-key" mapstructure:"access-key"`
+	PoolId    string `yaml:"pool-id" mapstructure:"pool-id"`
 }
 
 type cron struct {
-	Duration    int      `yaml:"duration"`
-	MachineList []string `yaml:"machine_list"`
+	Duration int      `yaml:"duration" mapstructure:"duration"`
+	Machines []string `yaml:"machines" mapstructure:"machines"`
 }
 
 func Init() {
-	util.Log().Info("[配置初始化] 正在初始化配置")
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(".")
@@ -61,6 +63,10 @@ func Init() {
 		if err != nil {
 			util.Log().Error("[配置初始化] 配置文件解析失败, key: %s, error: %s", key, err)
 		}
+	}
+
+	if Server.Debug {
+		Server.LogLevel = "debug"
 	}
 
 	// 重设log等级

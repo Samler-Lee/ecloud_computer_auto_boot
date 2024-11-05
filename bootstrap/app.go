@@ -9,7 +9,6 @@ func InitApplication() {
   ecloud computer auto boot
 
   Author: Samler
-  Blog: https://www.samler.cn
 =================================================
 `)
 }

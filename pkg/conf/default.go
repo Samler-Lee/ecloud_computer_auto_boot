@@ -1,6 +1,8 @@
 package conf
 
-var Secret = &secret{}
+var Secret = &secret{
+	Type: "public",
+}
 
 var Server = &server{
 	Debug:    false,
@@ -8,6 +10,6 @@ var Server = &server{
 }
 
 var Cron = &cron{
-	Duration:    60,
-	MachineList: []string{},
+	Duration: 60,
+	Machines: []string{},
 }
