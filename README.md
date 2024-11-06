@@ -47,7 +47,6 @@ go get -u gitlab.ecloud.com/ecloud/ecloudsdkcomputer
 ## 2、安装其它依赖
 ```shell
 go env -w GOPROXY=https://goproxy.cn,direct
-go env -w GONOSUMDB=
 go mod tidy
 ```
 
