@@ -22,12 +22,12 @@ var trustCmd = &cobra.Command{
 
 		client, err := ecloud.NewClient(conf.Secret.Username, conf.Secret.Password)
 		if err != nil {
-			util.Log().Error("客户端创建失败: ", err)
+			util.Log().Error("客户端创建失败: %s", err)
 			return
 		}
 
 		if _, err = client.Login(); err != nil {
-			util.Log().Error("登录失败: ", err)
+			util.Log().Error("登录失败: %s", err)
 			return
 		}
 
@@ -38,7 +38,7 @@ var trustCmd = &cobra.Command{
 
 		resp, err := client.SendTrustDeviceVerifySms()
 		if err != nil {
-			util.Log().Error("发送验证码失败: ", err)
+			util.Log().Error("发送验证码失败: %s", err)
 			return
 		}
 
@@ -47,17 +47,17 @@ var trustCmd = &cobra.Command{
 		var code string
 		_, err = fmt.Scanf("%s", &code)
 		if err != nil {
-			util.Log().Error("输入验证码失败: ", err)
+			util.Log().Error("输入验证码失败: %s", err)
 			return
 		}
 
 		if resp, err = client.TrustDevice(code); err != nil {
-			util.Log().Error("信任设备失败: ", err)
+			util.Log().Error("信任设备失败: %s", err)
 			return
 		}
 
 		if !resp.Success() {
-			util.Log().Error("信任设备失败: ", resp.ErrorMessage)
+			util.Log().Error("信任设备失败: %s", resp.ErrorMessage)
 			return
 		}
 

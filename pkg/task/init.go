@@ -8,6 +8,7 @@ import (
 	"github.com/robfig/cron/v3"
 	"gitlab.ecloud.com/ecloud/ecloudsdkcomputer"
 	"gitlab.ecloud.com/ecloud/ecloudsdkcore/config"
+	"os"
 )
 
 var (
@@ -22,27 +23,32 @@ func Init() {
 	if conf.Secret.Type == "public" {
 		client, err := ecloud.NewClient(conf.Secret.Username, conf.Secret.Password)
 		if err != nil {
-			util.Log().Error("客户端创建失败: ", err)
-			return
+			util.Log().Error("客户端创建失败: %s", err)
+			os.Exit(1)
 		}
 
 		publicClient = client
 
 		if _, err = publicClient.Login(); err != nil {
-			util.Log().Error("登录失败: ", err)
-			return
+			util.Log().Error("登录失败: %s", err)
+			os.Exit(1)
+		}
+
+		if !publicClient.HasTrustDeviceRecord() {
+			util.Log().Error("登录账号未受信任, 无法进行监控, 请先运行 trust 命令进行信任")
+			os.Exit(1)
 		}
 
 		_, err = publicClient.VerifyAccessTicket()
 		if err != nil {
-			util.Log().Error("验证访问票据失败: ", err)
-			return
+			util.Log().Error("验证访问票据失败: %s", err)
+			os.Exit(1)
 		}
 
 		_, err = publicClient.RecordDeviceInfo()
 		if err != nil {
-			util.Log().Error("记录登录设备信息失败: ", err)
-			return
+			util.Log().Error("记录登录设备信息失败: %s", err)
+			os.Exit(1)
 		}
 	} else {
 		client := ecloudsdkcomputer.NewClient(&config.Config{
@@ -58,7 +64,7 @@ func Init() {
 	_, err := c.AddFunc(fmt.Sprintf("@every %ds", conf.Cron.Duration), launchMonitor)
 	if err != nil {
 		util.Log().Error("[定时任务] 任务创建失败")
-		return
+		os.Exit(1)
 	}
 
 	c.Start()
